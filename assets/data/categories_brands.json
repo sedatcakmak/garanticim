@@ -1,0 +1,175 @@
+{
+  "categories": [
+    {
+      "id": "electronics",
+      "name": "Elektronik",
+      "brands": [
+        "Apple",
+        "Samsung",
+        "LG",
+        "Sony",
+        "Xiaomi",
+        "Huawei",
+        "Oppo",
+        "Vivo",
+        "Realme",
+        "Diğer"
+      ]
+    },
+    {
+      "id": "computer",
+      "name": "Bilgisayar & Laptop",
+      "brands": [
+        "Apple",
+        "Dell",
+        "HP",
+        "Lenovo",
+        "Asus",
+        "Acer",
+        "MSI",
+        "Microsoft",
+        "Huawei",
+        "Diğer"
+      ]
+    },
+    {
+      "id": "home_appliances",
+      "name": "Beyaz Eşya",
+      "brands": [
+        "Arçelik",
+        "Beko",
+        "Bosch",
+        "Siemens",
+        "Samsung",
+        "LG",
+        "Vestel",
+        "Altus",
+        "Profilo",
+        "Diğer"
+      ]
+    },
+    {
+      "id": "kitchen",
+      "name": "Mutfak Aletleri",
+      "brands": [
+        "Tefal",
+        "Philips",
+        "Arçelik",
+        "Beko",
+        "Bosch",
+        "Sinbo",
+        "King",
+        "Fakir",
+        "Karaca",
+        "Diğer"
+      ]
+    },
+    {
+      "id": "tv_audio",
+      "name": "TV & Ses Sistemleri",
+      "brands": [
+        "Samsung",
+        "LG",
+        "Sony",
+        "Vestel",
+        "TCL",
+        "Philips",
+        "Panasonic",
+        "JBL",
+        "Bose",
+        "Diğer"
+      ]
+    },
+    {
+      "id": "gaming",
+      "name": "Oyun Konsolları",
+      "brands": [
+        "Sony PlayStation",
+        "Microsoft Xbox",
+        "Nintendo",
+        "Valve",
+        "Diğer"
+      ]
+    },
+    {
+      "id": "camera",
+      "name": "Fotoğraf & Kamera",
+      "brands": [
+        "Canon",
+        "Nikon",
+        "Sony",
+        "Fujifilm",
+        "Panasonic",
+        "GoPro",
+        "DJI",
+        "Olympus",
+        "Diğer"
+      ]
+    },
+    {
+      "id": "furniture",
+      "name": "Mobilya",
+      "brands": [
+        "IKEA",
+        "Bellona",
+        "Yataş",
+        "İstikbal",
+        "Alfemo",
+        "Mondi",
+        "Doğtaş",
+        "Kelebek",
+        "Diğer"
+      ]
+    },
+    {
+      "id": "watches",
+      "name": "Saat & Aksesuar",
+      "brands": [
+        "Apple",
+        "Samsung",
+        "Garmin",
+        "Fitbit",
+        "Huawei",
+        "Xiaomi",
+        "Fossil",
+        "Casio",
+        "Diğer"
+      ]
+    },
+    {
+      "id": "automotive",
+      "name": "Otomotiv",
+      "brands": [
+        "Bosch",
+        "Varta",
+        "Mutlu",
+        "İnci",
+        "Blaupunkt",
+        "Pioneer",
+        "JVC",
+        "Diğer"
+      ]
+    },
+    {
+      "id": "tools",
+      "name": "Elektrikli El Aletleri",
+      "brands": [
+        "Bosch",
+        "Makita",
+        "DeWalt",
+        "Black+Decker",
+        "Stanley",
+        "Hilti",
+        "Metabo",
+        "Diğer"
+      ]
+    },
+    {
+      "id": "other",
+      "name": "Diğer",
+      "brands": [
+        "Diğer"
+      ]
+    }
+  ]
+}

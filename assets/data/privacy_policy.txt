@@ -1,0 +1,112 @@
+GİZLİLİK POLİTİKASI
+
+Son Güncelleme: 25 Ekim 2025
+
+Garanticim olarak, kullanıcılarımızın gizliliğini korumayı en önemli önceliğimiz olarak görüyoruz. Bu gizlilik politikası, kişisel verilerinizin nasıl toplandığını, kullanıldığını ve korunduğunu açıklamaktadır.
+
+1. TOPLANAN BİLGİLER
+
+1.1. Hesap Bilgileri
+- Telefon numaranız
+- Kullanıcı adınız
+- Hesap oluşturma tarihi
+
+1.2. Garanti Belgeleri
+- Ürün adları
+- Satın alma tarihleri
+- Fatura numaraları
+- Tedarikçi bilgileri
+- Ürün ve fatura fotoğrafları
+- Garanti süreleri
+- Maliyet bilgileri
+- Kategori ve marka bilgileri
+
+1.3. Teknik Bilgiler
+- Cihaz bilgileri (model, işletim sistemi)
+- Uygulama kullanım verileri
+- Hata logları
+
+2. BİLGİLERİN KULLANIM AMACI
+
+2.1. Kişisel bilgileriniz şu amaçlarla kullanılır:
+- Hesabınızı oluşturmak ve yönetmek
+- Garanti belgelerinizi saklamak ve yönetmek
+- Size bildirim göndermek (garanti süreleri için)
+- Uygulamayı geliştirmek ve iyileştirmek
+- Teknik destek sağlamak
+- Güvenliği sağlamak
+
+2.2. Sosyal özellikler için:
+- Ürün önerilerinizi diğer kullanıcılarla paylaşmak (isteğe bağlı)
+- Topluluk deneyimini zenginleştirmek
+
+3. BİLGİLERİN SAKLANMASI
+
+3.1. Verileriniz Google Firebase altyapısında güvenli bir şekilde saklanır.
+3.2. Tüm veriler şifrelenerek iletilir ve saklanır.
+3.3. Yedekleme ve felaket kurtarma prosedürleri uygulanır.
+
+4. BİLGİLERİN PAYLAŞIMI
+
+4.1. Kişisel bilgileriniz üçüncü şahıslarla PAYLAŞILMAZ.
+4.2. Aşağıdaki durumlarda bilgileriniz paylaşılabilir:
+- Yasal zorunluluk durumunda
+- Güvenlik tehditlerine karşı koruma amacıyla
+- Sizin açık izninizle
+
+4.3. Sosyal paylaşımlar:
+- Sadece paylaşmayı seçtiğiniz ürün bilgileri görünür
+- Kullanıcı adınız görüntülenir
+- Kişisel bilgileriniz (telefon, adres vb.) asla paylaşılmaz
+
+5. KULLANICI HAKLARI
+
+5.1. Kişisel verileriniz üzerinde aşağıdaki haklara sahipsiniz:
+- Verilerinize erişim hakkı
+- Verilerin düzeltilmesini talep etme hakkı
+- Verilerin silinmesini talep etme hakkı
+- Veri işlemenin kısıtlanmasını talep etme hakkı
+
+5.2. Hesabınızı sildiğinizde:
+- Tüm kişisel verileriniz kalıcı olarak silinir
+- Garanti belgeleriniz ve fotoğraflarınız silinir
+- Bu işlem geri alınamaz
+
+6. ÇEREZLER VE İZLEME
+
+6.1. Uygulama performansını iyileştirmek için anonim kullanım verileri toplanabilir.
+6.2. Bu veriler kişisel kimliğinizi belirlemek için kullanılamaz.
+
+7. ÇOCUKLARIN GİZLİLİĞİ
+
+Uygulamamız 13 yaş altı çocuklara yönelik değildir. 13 yaş altı kullanıcılardan bilerek veri toplamıyoruz.
+
+8. GÜVENLİK ÖNLEMLERİ
+
+8.1. Verilerinizi korumak için endüstri standardı güvenlik önlemleri uygulanır:
+- SSL/TLS şifreleme
+- Güvenli kimlik doğrulama (OTP)
+- Düzenli güvenlik güncellemeleri
+- Erişim kontrolleri
+
+9. BİLDİRİMLER
+
+9.1. Garanti süresi hatırlatmaları için bildirim izni istenir.
+9.2. Bildirimleri istediğiniz zaman kapatabilirsiniz.
+9.3. Pazarlama amaçlı bildirim gönderilmez.
+
+10. POLİTİKA DEĞİŞİKLİKLERİ
+
+Bu gizlilik politikasını değiştirme hakkını saklı tutarız. Önemli değişiklikler size bildirilecektir.
+
+11. İLETİŞİM
+
+Gizlilik ile ilgili sorularınız için:
+E-posta: gizlilik@garanticim.com
+Adres: İstanbul, Türkiye
+
+12. KVKK UYUMU
+
+Bu uygulama, 6698 sayılı Kişisel Verilerin Korunması Kanunu'na (KVKK) uygun olarak tasarlanmış ve yönetilmektedir.
+
+Bu politikayı kabul ederek, kişisel verilerinizin yukarıda belirtilen şekilde işlenmesine onay vermiş olursunuz.
