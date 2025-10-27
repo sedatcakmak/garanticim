@@ -1,34 +1,35 @@
 import 'dart:io';
 
 class AdConfig {
-  // Test Ad Unit IDs (production'da değiştirilecek)
   static const String androidSocialFeedAdUnitId =
-      'ca-app-pub-9756854719794108/1668277252'; // Test rewarded video
-  static const String iosSocialFeedAdUnitId =
-      'ca-app-pub-9756854719794108/2733946918'; // Test rewarded video
-
+      'ca-app-pub-9756854719794108/1668277252';
   static const String androidAddWarrantyAdUnitId =
-      'ca-app-pub-9756854719794108/4984991143'; // Test rewarded video
+      'ca-app-pub-9756854719794108/4984991143';
+
+  static const String iosSocialFeedAdUnitId =
+      'ca-app-pub-9756854719794108/2733946918';
   static const String iosAddWarrantyAdUnitId =
-      'ca-app-pub-9756854719794108/9791321615'; // Test rewarded video
+      'ca-app-pub-9756854719794108/9791321615';
 
-  // Ad show frequency
-  static const int adShowFrequency =
-      1; // Her kaç işlemde bir reklam gösterilecek
+  static const int adShowFrequency = 1;
 
-  /// Get platform-specific ad unit ID for social feed
   static String get socialFeedAdUnitId {
     if (Platform.isAndroid) {
       return androidSocialFeedAdUnitId;
     } else if (Platform.isIOS) {
       return iosSocialFeedAdUnitId;
+    } else {
+      return androidSocialFeedAdUnitId;
     }
-    return androidSocialFeedAdUnitId; // Şimdilik Android default
   }
 
-  /// Get platform-specific ad unit ID for add warranty
   static String get addWarrantyAdUnitId {
-    // TODO: Platform check eklenecek
-    return androidAddWarrantyAdUnitId; // Şimdilik Android default
+    if (Platform.isAndroid) {
+      return androidAddWarrantyAdUnitId;
+    } else if (Platform.isIOS) {
+      return iosAddWarrantyAdUnitId;
+    } else {
+      return androidAddWarrantyAdUnitId;
+    }
   }
 }

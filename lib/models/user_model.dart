@@ -2,8 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
   final String userId;
-  final String name;
-  final String phone;
+  final String deviceId;
   final DateTime createdAt;
   final bool isAdmin;
   final bool isPremium;
@@ -12,8 +11,7 @@ class UserModel {
 
   UserModel({
     required this.userId,
-    required this.name,
-    required this.phone,
+    required this.deviceId,
     required this.createdAt,
     this.isAdmin = false,
     this.isPremium = false,
@@ -24,8 +22,7 @@ class UserModel {
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,
-      'name': name,
-      'phone': phone,
+      'deviceId': deviceId,
       'createdAt': Timestamp.fromDate(createdAt),
       'isAdmin': isAdmin,
       'isPremium': isPremium,
@@ -39,8 +36,7 @@ class UserModel {
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       userId: map['userId'] ?? '',
-      name: map['name'] ?? '',
-      phone: map['phone'] ?? '',
+      deviceId: map['deviceId'] ?? '',
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       isAdmin: map['isAdmin'] ?? false,
       isPremium: map['isPremium'] ?? false,
@@ -51,18 +47,17 @@ class UserModel {
     );
   }
 
-  /// Check if premium subscription is still active
   bool get isPremiumActive {
     if (!isPremium) return false;
+
     if (premiumExpiryDate == null) return false;
+
     return premiumExpiryDate!.isAfter(DateTime.now());
   }
 
-  /// Copy with updated fields
   UserModel copyWith({
     String? userId,
-    String? name,
-    String? phone,
+    String? deviceId,
     DateTime? createdAt,
     bool? isAdmin,
     bool? isPremium,
@@ -71,8 +66,7 @@ class UserModel {
   }) {
     return UserModel(
       userId: userId ?? this.userId,
-      name: name ?? this.name,
-      phone: phone ?? this.phone,
+      deviceId: deviceId ?? this.deviceId,
       createdAt: createdAt ?? this.createdAt,
       isAdmin: isAdmin ?? this.isAdmin,
       isPremium: isPremium ?? this.isPremium,

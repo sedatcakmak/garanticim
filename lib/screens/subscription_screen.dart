@@ -18,7 +18,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   final SubscriptionService _subscriptionService = SubscriptionService();
   bool _isLoading = false;
   bool _isLoadingProducts = true;
-  String _price = '₺30/ay';
+  String _price = '₺29,99/ay';
 
   @override
   void initState() {
@@ -42,7 +42,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         }
       }
     } catch (e) {
-      print('Error loading products: $e');
+      debugPrint('Error loading products: $e');
     } finally {
       if (mounted) {
         setState(() {
@@ -68,7 +68,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         if (success) {
           _showSuccessDialog();
         } else {
-          _showErrorDialog('Satın alma işlemi başlatılamadı. Lütfen tekrar deneyin.');
+          _showErrorDialog(
+            'Satın alma işlemi başlatılamadı. Lütfen tekrar deneyin.',
+          );
         }
       }
     } catch (e) {
@@ -120,13 +122,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     ResponsiveDialog.show(
       context: context,
       title: 'Başarılı!',
-      description: 'Premium üyeliğiniz aktif edildi. Tüm özelliklerin keyfini çıkarabilirsiniz!',
+      description:
+          'Premium üyeliğiniz aktif edildi. Tüm özelliklerin keyfini çıkarabilirsiniz!',
       titleColor: AppColors.success,
       actions: [
         CupertinoDialogAction(
           onPressed: () {
-            Navigator.of(context).pop(); // Close dialog
-            Navigator.of(context).pop(); // Close subscription screen
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
           },
           child: Text(
             'Harika!',
@@ -162,7 +165,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
               child: Column(
                 children: [
-                  // Back button
                   Align(
                     alignment: Alignment.topLeft,
                     child: GestureDetector(
@@ -185,9 +187,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     ),
                   ),
 
-                  SizedBox(height: 32.h),
-
-                  // Hero icon
                   Container(
                     width: 120.w,
                     height: 120.w,
@@ -216,9 +215,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     ),
                   ),
 
-                  SizedBox(height: 32.h),
+                  SizedBox(height: 8.h),
 
-                  // Title
                   Text(
                     'Premium Üyelik',
                     style: TextStyle(
@@ -230,11 +228,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     textAlign: TextAlign.center,
                   ),
 
-                  SizedBox(height: 12.h),
-
-                  // Subtitle
                   Text(
-                    'Tüm özelliklerin kilidini aç',
+                    'Tüm özelliklerin kilidini aç!',
                     style: TextStyle(
                       fontFamily: AppFonts.family,
                       fontSize: TextSizes.normal.sp,
@@ -243,16 +238,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     textAlign: TextAlign.center,
                   ),
 
-                  SizedBox(height: 48.h),
+                  SizedBox(height: 16.h),
 
-                  // Benefits list
                   _buildBenefitItem(
                     icon: CupertinoIcons.infinite,
                     title: 'Sınırsız fatura oluşturma',
                     description: 'İstediğiniz kadar ürün ekleyin',
                   ),
 
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 8.h),
 
                   _buildBenefitItem(
                     icon: CupertinoIcons.eye_slash_fill,
@@ -260,19 +254,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     description: 'Hiç reklam görmeden kullanın',
                   ),
 
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 24.h),
 
-                  _buildBenefitItem(
-                    icon: CupertinoIcons.chat_bubble_2_fill,
-                    title: 'Öncelikli destek',
-                    description: 'Sorularınıza hızlı yanıt alın',
-                  ),
-
-                  SizedBox(height: 48.h),
-
-                  // Price display
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 20.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 32.w,
+                      vertical: 20.h,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.white,
                       borderRadius: BorderRadius.circular(20.r),
@@ -305,11 +293,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     ),
                   ),
 
-                  SizedBox(height: 32.h),
+                  SizedBox(height: 24.h),
 
-                  // Purchase button
                   GestureDetector(
-                    onTap: _isLoading || _isLoadingProducts ? null : _purchaseSubscription,
+                    onTap: _isLoading || _isLoadingProducts
+                        ? null
+                        : _purchaseSubscription,
                     child: Container(
                       width: double.infinity,
                       padding: EdgeInsets.symmetric(vertical: 18.h),
@@ -317,7 +306,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         gradient: LinearGradient(
                           colors: _isLoading || _isLoadingProducts
                               ? [AppColors.gray, AppColors.gray]
-                              : [AppColors.info, AppColors.info.withValues(alpha: 0.8)],
+                              : [
+                                  AppColors.info,
+                                  AppColors.info.withValues(alpha: 0.8),
+                                ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -354,9 +346,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                   SizedBox(height: 16.h),
 
-                  // Restore button
                   GestureDetector(
-                    onTap: _isLoading || _isLoadingProducts ? null : _restorePurchases,
+                    onTap: _isLoading || _isLoadingProducts
+                        ? null
+                        : _restorePurchases,
                     child: Container(
                       width: double.infinity,
                       padding: EdgeInsets.symmetric(vertical: 18.h),
@@ -383,9 +376,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     ),
                   ),
 
-                  SizedBox(height: 16.h),
-
-                  // Later button
                   GestureDetector(
                     onTap: _isLoading
                         ? null
@@ -402,16 +392,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           fontFamily: AppFonts.family,
                           fontSize: TextSizes.normal.sp,
                           fontWeight: FontWeight.w600,
-                          color: _isLoading ? AppColors.gray : AppColors.textSecondary,
+                          color: _isLoading
+                              ? AppColors.gray
+                              : AppColors.textSecondary,
                         ),
                         textAlign: TextAlign.center,
                       ),
                     ),
                   ),
 
-                  SizedBox(height: 32.h),
-
-                  // Terms text
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
                     child: Text(
@@ -440,14 +429,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     required String description,
   }) {
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Row(
         children: [
-          // Check icon
           Container(
             width: 56.w,
             height: 56.w,
@@ -464,18 +452,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
           SizedBox(width: 16.w),
 
-          // Feature icon and text
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Icon(
-                      icon,
-                      size: 20.sp,
-                      color: AppColors.black,
-                    ),
+                    Icon(icon, size: 20.sp, color: AppColors.black),
                     SizedBox(width: 8.w),
                     Expanded(
                       child: Text(

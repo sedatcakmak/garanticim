@@ -11,7 +11,6 @@ class UserService {
 
   String? _cachedUserId;
 
-  /// Get current user ID
   Future<String?> getUserId() async {
     if (_cachedUserId != null) {
       return _cachedUserId!;
@@ -19,7 +18,6 @@ class UserService {
     return null;
   }
 
-  /// Clear user data (for testing purposes)
   Future<void> clearUser() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_userIdKey);

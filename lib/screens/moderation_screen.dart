@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:garanticim/services/auth_service.dart';
 import '../services/social_service.dart';
-import '../services/auth_service.dart';
 import '../services/notification_service.dart';
 import '../models/warranty_item.dart';
 import '../widgets/custom_app_bar.dart';
@@ -26,23 +26,18 @@ class _ModerationScreenState extends State<ModerationScreen> {
 
   Future<void> _approvePost(WarrantyItem post) async {
     try {
-      // Haptic feedback
       HapticFeedback.mediumImpact();
 
-      // Get admin ID
       final currentUserId = await _authService.getCurrentUserId();
       if (currentUserId == null) {
         _showErrorDialog('Kullanıcı oturumu bulunamadı.');
         return;
       }
 
-      // Call approvePost
       await _socialService.approvePost(post.id, currentUserId);
 
-      // Send notification to post owner
       await _notificationService.sendPostApprovedNotification(post.productName);
 
-      // Show success message
       _showSuccessDialog('Paylaşım onaylandı ve sosyal akışta görünüyor.');
     } catch (e) {
       _showErrorDialog('Paylaşım onaylanırken bir hata oluştu: $e');
@@ -51,23 +46,18 @@ class _ModerationScreenState extends State<ModerationScreen> {
 
   Future<void> _rejectPost(WarrantyItem post) async {
     try {
-      // Haptic feedback
       HapticFeedback.mediumImpact();
 
-      // Get admin ID
       final currentUserId = await _authService.getCurrentUserId();
       if (currentUserId == null) {
         _showErrorDialog('Kullanıcı oturumu bulunamadı.');
         return;
       }
 
-      // Call rejectPost
       await _socialService.rejectPost(post.id, currentUserId);
 
-      // Send notification to post owner
       await _notificationService.sendPostRejectedNotification(post.productName);
 
-      // Show success message
       _showSuccessDialog('Paylaşım reddedildi.');
     } catch (e) {
       _showErrorDialog('Paylaşım reddedilirken bir hata oluştu: $e');
@@ -159,7 +149,6 @@ class _ModerationScreenState extends State<ModerationScreen> {
               child: StreamBuilder<List<WarrantyItem>>(
                 stream: _socialService.getPendingPosts(),
                 builder: (context, snapshot) {
-                  // Loading state
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
                       child: CupertinoActivityIndicator(
@@ -169,7 +158,6 @@ class _ModerationScreenState extends State<ModerationScreen> {
                     );
                   }
 
-                  // Error state
                   if (snapshot.hasError) {
                     return EmptyStateWidget(
                       icon: CupertinoIcons.exclamationmark_triangle,
@@ -181,7 +169,6 @@ class _ModerationScreenState extends State<ModerationScreen> {
 
                   final posts = snapshot.data ?? [];
 
-                  // Empty state
                   if (posts.isEmpty) {
                     return EmptyStateWidget(
                       icon: CupertinoIcons.checkmark_shield,
@@ -191,7 +178,6 @@ class _ModerationScreenState extends State<ModerationScreen> {
                     );
                   }
 
-                  // List of pending posts
                   return ListView.builder(
                     padding: EdgeInsets.symmetric(
                       horizontal: 16.w,
@@ -276,7 +262,6 @@ class _PendingPostCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // User header
                 Row(
                   children: [
                     Icon(
@@ -285,7 +270,6 @@ class _PendingPostCard extends StatelessWidget {
                       size: 24.sp,
                     ),
                     SizedBox(width: 8.w),
-                    // Get username from userId
                     FutureBuilder<String>(
                       future: _getUserName(post.userId),
                       builder: (context, snapshot) {
@@ -307,7 +291,6 @@ class _PendingPostCard extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
 
-                // Product name
                 Text(
                   post.productName,
                   style: TextStyle(
@@ -321,7 +304,6 @@ class _PendingPostCard extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
 
-                // Category and Brand
                 _buildInfoRow(
                   CupertinoIcons.square_list,
                   'Kategori',
@@ -336,7 +318,6 @@ class _PendingPostCard extends StatelessWidget {
 
                 SizedBox(height: 8.h),
 
-                // Reaction label
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -380,7 +361,6 @@ class _PendingPostCard extends StatelessWidget {
             ),
           ),
 
-          // Product photo
           if (post.productPhotoUrl != null && post.productPhotoUrl!.isNotEmpty)
             ClipRRect(
               borderRadius: BorderRadius.only(
@@ -417,12 +397,10 @@ class _PendingPostCard extends StatelessWidget {
               ),
             ),
 
-          // Action buttons
           Padding(
             padding: EdgeInsets.all(16.w),
             child: Row(
               children: [
-                // Reject button
                 Expanded(
                   child: CupertinoButton(
                     padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -452,7 +430,6 @@ class _PendingPostCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 12.w),
-                // Approve button
                 Expanded(
                   child: CupertinoButton(
                     padding: EdgeInsets.symmetric(vertical: 12.h),

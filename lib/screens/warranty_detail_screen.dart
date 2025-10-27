@@ -397,7 +397,7 @@ class _WarrantyDetailScreenState extends State<WarrantyDetailScreen> {
           ),
         ],
         cancelButton: Padding(
-          padding: EdgeInsets.only(bottom: 8.h), // 🔹 butonun alt boşluğu
+          padding: EdgeInsets.only(bottom: 8.h),
           child: CupertinoActionSheetAction(
             onPressed: () => Navigator.of(context).pop(),
             isDefaultAction: true,

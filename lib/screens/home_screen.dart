@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String? _userId = '';
   String _searchQuery = '';
-  String _filterType = 'all'; // all, expiring, expired
+  String _filterType = 'all';
   bool _isProcessingShare = false;
   String? _sharingWarrantyId;
 
@@ -95,11 +95,8 @@ class _HomeScreenState extends State<HomeScreen> {
       child: CupertinoSearchTextField(
         controller: _searchController,
         placeholder: 'Ürün adı, tedarikçi veya fatura ara...',
-        itemSize: 24.w, // 🔹 ikon ve yükseklik ölçeği
-        padding: EdgeInsets.symmetric(
-          vertical: 16.h,
-          horizontal: 8.w,
-        ), // 🔹 responsive iç boşluk
+        itemSize: 24.w,
+        padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 8.w),
         style: TextStyle(
           fontFamily: AppFonts.family,
           fontSize: TextSizes.normal.sp,
@@ -436,7 +433,6 @@ class _HomeScreenState extends State<HomeScreen> {
   List<WarrantyItem> _applyFilters(List<WarrantyItem> warranties) {
     var filtered = warranties;
 
-    // Apply search filter
     if (_searchQuery.isNotEmpty) {
       filtered = filtered.where((w) {
         return w.productName.toLowerCase().contains(_searchQuery) ||
@@ -447,7 +443,6 @@ class _HomeScreenState extends State<HomeScreen> {
       }).toList();
     }
 
-    // Apply type filter
     if (_filterType == 'expiring') {
       filtered = filtered
           .where((w) => w.isExpiringSoon && !w.isExpired)
@@ -490,15 +485,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (_userId == null) return;
 
-    // Check if user is premium
     final isPremium = await _authService.isPremiumUser();
 
-    // If not premium, check warranty limit
     if (!isPremium) {
-      final canCreate = await _firebaseService.canCreateWarranty(_userId!, false);
+      final canCreate = await _firebaseService.canCreateWarranty(
+        _userId!,
+        false,
+      );
 
       if (!canCreate) {
-        // Show subscription screen
         if (mounted) {
           await Navigator.of(context).push(
             CupertinoPageRoute(
@@ -509,16 +504,12 @@ class _HomeScreenState extends State<HomeScreen> {
         return;
       }
 
-      // Show rewarded ad before allowing warranty creation
       await AdService().showAddWarrantyAd();
     }
 
-    // Navigate to add warranty screen
     if (mounted) {
       Navigator.of(context).push(
-        CupertinoPageRoute(
-          builder: (context) => const AddWarrantyScreen(),
-        ),
+        CupertinoPageRoute(builder: (context) => const AddWarrantyScreen()),
       );
     }
   }

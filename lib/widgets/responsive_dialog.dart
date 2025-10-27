@@ -9,8 +9,8 @@ class ResponsiveDialog {
     required BuildContext context,
     required String title,
     required String description,
-    Color? titleColor, // 🔹 başlık rengi eklendi
-    List<Widget>? actions, // 🔹 dışarıdan butonlar verilebilir
+    Color? titleColor,
+    List<Widget>? actions,
   }) {
     showCupertinoDialog(
       context: context,
@@ -24,7 +24,7 @@ class ResponsiveDialog {
                 fontFamily: AppFonts.family,
                 fontWeight: FontWeight.bold,
                 fontSize: TextSizes.normal.sp,
-                color: titleColor ?? AppColors.black, // 🔹 varsayılan siyah
+                color: titleColor ?? AppColors.black,
               ),
             ),
             content: Padding(

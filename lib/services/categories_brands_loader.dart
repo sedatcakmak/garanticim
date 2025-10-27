@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CategoryBrandData {
@@ -29,7 +30,6 @@ class CategoriesBrandsLoader {
 
   List<CategoryBrandData>? _categories;
 
-  /// Load categories and brands from JSON file.
   Future<List<CategoryBrandData>> loadCategories() async {
     if (_categories != null) {
       return _categories!;
@@ -48,13 +48,11 @@ class CategoriesBrandsLoader {
 
       return _categories!;
     } catch (e) {
-      // ignore: avoid_print
-      print('Error loading categories: $e');
+      debugPrint('Error loading categories: $e');
       return [];
     }
   }
 
-  /// Get brands for a specific category id.
   Future<List<String>> getBrandsForCategory(String categoryId) async {
     final categories = await loadCategories();
     final category = categories.firstWhere(
@@ -64,7 +62,6 @@ class CategoriesBrandsLoader {
     return category.brands;
   }
 
-  /// Get category name by id.
   Future<String> getCategoryName(String categoryId) async {
     final categories = await loadCategories();
     final category = categories.firstWhere(
@@ -74,7 +71,6 @@ class CategoriesBrandsLoader {
     return category.name;
   }
 
-  /// Clear cached data (useful for testing).
   void clearCache() {
     _categories = null;
   }

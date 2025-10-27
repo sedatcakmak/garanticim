@@ -17,7 +17,7 @@ class WarrantyItem {
   final bool isSharedSocial;
   final DateTime sharedAt;
   final bool isLiked;
-  final String moderationStatus; // 'approved', 'pending', 'rejected'
+  final String moderationStatus;
   final DateTime? moderatedAt;
   final String? moderatedBy;
 
@@ -43,7 +43,6 @@ class WarrantyItem {
     this.moderatedBy,
   });
 
-  /// Convert to Firestore document
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,
@@ -101,7 +100,6 @@ class WarrantyItem {
     );
   }
 
-  /// Create a copy with updated fields
   WarrantyItem copyWith({
     String? id,
     String? userId,
@@ -148,7 +146,6 @@ class WarrantyItem {
     );
   }
 
-  /// Get warranty expiry date
   DateTime get expiryDate {
     return DateTime(
       purchaseDate.year,
@@ -157,15 +154,12 @@ class WarrantyItem {
     );
   }
 
-  /// Get remaining days until expiry
   int get remainingDays {
     final now = DateTime.now();
     return expiryDate.difference(now).inDays;
   }
 
-  /// Check if warranty is expired
   bool get isExpired => remainingDays < 0;
 
-  /// Check if warranty is expiring soon (within 30 days)
   bool get isExpiringSoon => remainingDays >= 0 && remainingDays <= 30;
 }

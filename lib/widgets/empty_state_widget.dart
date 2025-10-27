@@ -62,12 +62,15 @@ class EmptyStateWidget extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: CupertinoButton.filled(
+                  color: AppColors.black,
+                  focusColor: AppColors.gray,
                   onPressed: onAction,
                   borderRadius: BorderRadius.circular(16.r),
                   padding: EdgeInsets.symmetric(vertical: 14.h),
                   child: Text(
                     actionLabel!,
                     style: TextStyle(
+                      color: AppColors.white,
                       fontFamily: AppFonts.family,
                       fontSize: TextSizes.normal.sp,
                       fontWeight: FontWeight.bold,

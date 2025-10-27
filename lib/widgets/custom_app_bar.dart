@@ -18,7 +18,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   @override
-  Size get preferredSize => Size.fromHeight(115.h); // 🔹 responsive yükseklik
+  Size get preferredSize => Size.fromHeight(115.h);
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +71,7 @@ class RoundIconButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        height: 40.w, // 🔹 kare buton, width/height aynı oranda ölçeklenir
+        height: 40.w,
         width: 40.w,
         decoration: BoxDecoration(
           color: AppColors.white,

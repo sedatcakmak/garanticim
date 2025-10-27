@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:garanticim/models/warranty_item.dart';
+import 'package:garanticim/services/auth_service.dart';
 import '../services/social_service.dart';
 import '../services/ad_service.dart';
 import '../services/notification_service.dart';
-import '../services/auth_service.dart';
 import '../utils/app_colors.dart';
 import '../utils/app_fonts.dart';
 import '../utils/text_sizes.dart';
@@ -161,7 +161,7 @@ class _SocialFeedScreenState extends State<SocialFeedScreen> {
                       final post = posts[index];
                       return _SocialPostCard(
                         post: post,
-                        isAdmin: _isAdmin,
+                        isAdmin: false,
                         onApprove: () => _approvePost(post),
                         onReject: () => _rejectPost(post),
                       );
@@ -241,7 +241,6 @@ class _SocialPostCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // User header
                 Row(
                   children: [
                     Icon(
@@ -250,7 +249,6 @@ class _SocialPostCard extends StatelessWidget {
                       size: 24.sp,
                     ),
                     SizedBox(width: 8.w),
-                    // Get username from userId
                     FutureBuilder<String>(
                       future: _getUserName(post.userId),
                       builder: (context, snapshot) {
@@ -272,7 +270,6 @@ class _SocialPostCard extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
 
-                // Product name
                 Text(
                   post.productName,
                   style: TextStyle(
@@ -286,7 +283,6 @@ class _SocialPostCard extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
 
-                // Category and Brand
                 _buildInfoRow(
                   CupertinoIcons.square_list,
                   'Kategori',
@@ -301,7 +297,6 @@ class _SocialPostCard extends StatelessWidget {
 
                 SizedBox(height: 8.h),
 
-                // Reaction label
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -344,7 +339,6 @@ class _SocialPostCard extends StatelessWidget {
                   ],
                 ),
 
-                // Admin moderation buttons
                 if (isAdmin) ...[
                   SizedBox(height: 12.h),
                   Row(
@@ -413,7 +407,6 @@ class _SocialPostCard extends StatelessWidget {
             ),
           ),
 
-          // Product photo
           if (post.productPhotoUrl != null && post.productPhotoUrl!.isNotEmpty)
             ClipRRect(
               borderRadius: BorderRadius.only(

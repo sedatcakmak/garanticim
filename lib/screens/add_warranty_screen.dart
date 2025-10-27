@@ -18,7 +18,7 @@ import '../utils/text_sizes.dart';
 import '../utils/date_helpers.dart';
 
 class AddWarrantyScreen extends StatefulWidget {
-  final WarrantyItem? warranty; // For editing
+  final WarrantyItem? warranty;
 
   const AddWarrantyScreen({super.key, this.warranty});
 
@@ -583,12 +583,15 @@ class _AddWarrantyScreenState extends State<AddWarrantyScreen> {
           SizedBox(
             width: double.infinity,
             child: CupertinoButton.filled(
+              color: AppColors.black,
+              focusColor: AppColors.gray,
               onPressed: _isLoading ? null : _saveWarranty,
               borderRadius: BorderRadius.circular(16.r),
               padding: EdgeInsets.symmetric(vertical: 16.h),
               child: Text(
                 isEditing ? 'Güncelle' : 'Kaydet',
                 style: TextStyle(
+                  color: AppColors.white,
                   fontFamily: AppFonts.family,
                   fontSize: TextSizes.box.sp,
                   fontWeight: FontWeight.bold,
@@ -675,7 +678,6 @@ class _AddWarrantyScreenState extends State<AddWarrantyScreen> {
       final userId = await _authService.getCurrentUserId();
       if (userId == null) return;
 
-      // Upload images if new files selected
       String? productPhotoUrl = _productImageUrl;
       String? invoicePhotoUrl = _invoiceImageUrl;
 
@@ -726,13 +728,10 @@ class _AddWarrantyScreenState extends State<AddWarrantyScreen> {
         warranty = warranty.copyWith(id: newId);
       }
 
-      // Schedule notifications (don't let notification errors break the flow)
       try {
         await _notificationService.scheduleWarrantyNotifications(warranty);
       } catch (notificationError) {
-        // Silently fail notification scheduling - warranty is already saved
-        // ignore: avoid_print
-        print('Notification scheduling error: $notificationError');
+        debugPrint('Notification scheduling error: $notificationError');
       }
 
       if (mounted) {
@@ -743,8 +742,7 @@ class _AddWarrantyScreenState extends State<AddWarrantyScreen> {
         _showSuccessDialog();
       }
     } catch (e) {
-      // ignore: avoid_print
-      print('Error saving warranty: $e');
+      debugPrint('Error saving warranty: $e');
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -817,8 +815,8 @@ class _AddWarrantyScreenState extends State<AddWarrantyScreen> {
         CupertinoDialogAction(
           child: const Text('Tamam'),
           onPressed: () {
-            Navigator.of(context).pop(); // dialogu kapat
-            Navigator.of(context).pop(); // sayfayı kapat
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
           },
         ),
       ],

@@ -21,16 +21,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('tr_TR', null);
 
-  // Initialize Firebase
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-  } catch (e) {
-    // Firebase already initialized (hot reload case)
-  }
+    // ignore: empty_catches
+  } catch (e) {}
 
-  // Initialize services in parallel for faster startup
   await Future.wait([
     FirebaseService().initialize(),
     NotificationService().initialize(),
@@ -38,14 +35,11 @@ void main() async {
     SubscriptionService().initialize(),
   ]);
 
-  // Request notification permissions (non-blocking)
   NotificationService().requestPermissions();
 
-  // Load ads
   AdService().loadSocialFeedAd();
   AdService().loadAddWarrantyAd();
 
-  // Check subscription status
   await SubscriptionService().checkSubscriptionStatus();
 
   runApp(const GaranticimApp());
@@ -91,7 +85,6 @@ class AuthWrapper extends StatelessWidget {
     return FutureBuilder<Map<String, bool>>(
       future: _checkAuthState(),
       builder: (context, snapshot) {
-        // Show loading while checking auth state
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CupertinoPageScaffold(
             backgroundColor: AppColors.background,
@@ -107,8 +100,6 @@ class AuthWrapper extends StatelessWidget {
         final authState = snapshot.data ?? {'isLoggedIn': false};
         final isLoggedIn = authState['isLoggedIn'] ?? false;
 
-        // Guest mode is NOT persisted, so always show login screen
-        // unless user is actually logged in
         if (isLoggedIn) {
           return const MainScreen();
         } else {

@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:garanticim/screens/phone_login_screen.dart';
-import 'package:garanticim/services/auth_service.dart';
-import 'package:garanticim/services/firebase_service.dart';
 import 'package:garanticim/widgets/responsive_dialog.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../services/notification_service.dart';
 import '../widgets/custom_app_bar.dart';
 import '../utils/app_colors.dart';
@@ -21,22 +20,22 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final AuthService _authService = AuthService();
   final NotificationService _notificationService = NotificationService();
+  String _version = '';
 
-  String? _userName = '';
   bool _notificationsEnabled = true;
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+
+    _loadVersion();
   }
 
-  Future<void> _loadUserData() async {
-    final userName = await _authService.getCurrentUserName();
+  Future<void> _loadVersion() async {
+    final info = await PackageInfo.fromPlatform();
     setState(() {
-      _userName = userName;
+      _version = info.version;
     });
   }
 
@@ -69,24 +68,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             _notificationService.cancelAllNotifications();
                           }
                         },
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16.h),
-                  _buildSection(
-                    title: 'Hesap',
-                    children: [
-                      _buildInfoTile(
-                        icon: CupertinoIcons.person_circle,
-                        title: 'Kullanıcı İsmi',
-                        value: _userName == null || _userName!.isEmpty
-                            ? 'Yükleniyor...'
-                            : _userName!,
-                      ),
-                      _buildDangerActionTile(
-                        icon: CupertinoIcons.trash,
-                        title: 'Hesabı Sil',
-                        onTap: _deleteAccount,
                       ),
                     ],
                   ),
@@ -152,115 +133,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _logout() {
-    AuthService().logout();
-
     Navigator.of(context).pushAndRemoveUntil(
       CupertinoPageRoute(builder: (context) => const PhoneLoginScreen()),
       (route) => false,
-    );
-  }
-
-  Future<void> _deleteAccount() async {
-    HapticFeedback.lightImpact();
-
-    // Show confirmation dialog
-    final confirmed = await showCupertinoDialog<bool>(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('Hesabı Sil'),
-        content: const Text(
-          'Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve tüm verileriniz silinecektir.',
-        ),
-        actions: [
-          CupertinoDialogAction(
-            child: const Text('İptal'),
-            onPressed: () => Navigator.of(context).pop(false),
-          ),
-          CupertinoDialogAction(
-            isDestructiveAction: true,
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Evet, Sil'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed != true) return;
-
-    try {
-      // Get current user ID
-      final userId = await _authService.getCurrentUserId();
-      if (userId == null) {
-        _showErrorDialog('Kullanıcı bulunamadı');
-        return;
-      }
-
-      // Show loading indicator
-      if (!mounted) return;
-      showCupertinoDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const Center(
-          child: CupertinoActivityIndicator(radius: 20),
-        ),
-      );
-
-      // Delete all user warranties
-      await FirebaseService().deleteAllUserWarranties(userId);
-
-      // Delete user account
-      final success = await _authService.deleteAccount();
-
-      // Dismiss loading indicator
-      if (!mounted) return;
-      Navigator.of(context).pop();
-
-      if (success) {
-        // Show success message
-        if (!mounted) return;
-        await showCupertinoDialog(
-          context: context,
-          builder: (context) => CupertinoAlertDialog(
-            title: const Text('Başarılı'),
-            content: const Text('Hesabınız başarıyla silindi.'),
-            actions: [
-              CupertinoDialogAction(
-                child: const Text('Tamam'),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          ),
-        );
-
-        // Navigate to login screen
-        if (!mounted) return;
-        Navigator.of(context).pushAndRemoveUntil(
-          CupertinoPageRoute(builder: (context) => const PhoneLoginScreen()),
-          (route) => false,
-        );
-      } else {
-        _showErrorDialog('Hesap silinirken bir hata oluştu');
-      }
-    } catch (e) {
-      // Dismiss loading indicator if still showing
-      if (mounted) Navigator.of(context).pop();
-      _showErrorDialog('Hesap silinirken bir hata oluştu: $e');
-    }
-  }
-
-  void _showErrorDialog(String message) {
-    showCupertinoDialog(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('Hata'),
-        content: Text(message),
-        actions: [
-          CupertinoDialogAction(
-            child: const Text('Tamam'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
     );
   }
 
@@ -353,57 +228,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildInfoTile({
-    required IconData icon,
-    required String title,
-    required String value,
-    VoidCallback? onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: AppColors.gray.withValues(alpha: 0.2)),
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 24.sp, color: AppColors.black),
-            SizedBox(width: 16.w),
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontFamily: AppFonts.family,
-                  fontSize: TextSizes.normal.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.black,
-                ),
-              ),
-            ),
-            Text(
-              value,
-              style: TextStyle(
-                fontFamily: AppFonts.family,
-                fontSize: TextSizes.normal.sp,
-                color: AppColors.gray,
-              ),
-            ),
-            SizedBox(width: 8.w),
-            if (onTap != null)
-              Icon(
-                CupertinoIcons.chevron_forward,
-                size: 18.sp,
-                color: AppColors.gray,
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildActionTile({
     required IconData icon,
     required String title,
@@ -449,59 +273,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildDangerActionTile({
-    required IconData icon,
-    required String title,
-    VoidCallback? onTap,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        if (onTap != null) {
-          HapticFeedback.lightImpact();
-          onTap();
-        }
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: AppColors.gray.withValues(alpha: 0.2)),
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 24.sp, color: AppColors.danger),
-            SizedBox(width: 16.w),
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontFamily: AppFonts.family,
-                  fontSize: TextSizes.normal.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.danger,
-                ),
-              ),
-            ),
-            Icon(
-              CupertinoIcons.chevron_forward,
-              size: 18.sp,
-              color: AppColors.danger,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildVersionInfo() {
     return Center(
       child: Column(
         children: [
-          Icon(
-            CupertinoIcons.shield_fill,
-            size: 48.sp,
-            color: AppColors.gray.withValues(alpha: 0.3),
+          Image.asset(
+            'assets/logo.png',
+            width: 64.w,
+            height: 64.w,
+            fit: BoxFit.contain,
           ),
           SizedBox(height: 12.h),
           Text(
@@ -515,7 +295,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           SizedBox(height: 4.h),
           Text(
-            'Sürüm 1.0.0',
+            _version.isNotEmpty ? 'Sürüm $_version' : 'Sürüm yükleniyor...',
             style: TextStyle(
               fontFamily: AppFonts.family,
               fontSize: TextSizes.small.sp,
