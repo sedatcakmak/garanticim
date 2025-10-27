@@ -36,8 +36,6 @@
 		<true/>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
-		<key>NSUserTrackingUsageDescription</key>
-		<string>Reklamları size daha uygun gösterebilmek için izin gereklidir.</string>
 		<key>NSUserNotificationUsageDescription</key>
 		<string>Garanti hatırlatıcı bildirimleri gönderebilmek için izin gereklidir.</string>
 		<key>UISupportedInterfaceOrientations</key>
