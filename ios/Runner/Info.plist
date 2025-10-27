@@ -20,6 +20,10 @@
 		<string>$(FLUTTER_BUILD_NAME)</string>
 		<key>CFBundleSignature</key>
 		<string>????</string>
+		<key>NSBluetoothAlwaysUsageDescription</key>
+		<string>Bu uygulama, belirli SDK'ların doğru çalışabilmesi için Bluetooth erişimi talep edebilir, ancak doğrudan kullanmaz.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Bu uygulama, fotoğraf yüklemek veya paylaşmak için galeriye erişim isteyebilir.</string>
 		<key>CFBundleVersion</key>
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
 		<key>LSRequiresIPhoneOS</key>
