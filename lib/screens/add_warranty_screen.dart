@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:garanticim/services/ad_service.dart';
 import 'package:garanticim/services/auth_service.dart';
 import 'package:garanticim/widgets/responsive_dialog.dart';
 import '../models/warranty_item.dart';
@@ -63,6 +64,7 @@ class _AddWarrantyScreenState extends State<AddWarrantyScreen> {
   static const String _customOptionLabel = 'Diğer';
 
   bool get isEditing => widget.warranty != null;
+  bool _adShown = false;
 
   @override
   void initState() {
@@ -71,6 +73,16 @@ class _AddWarrantyScreenState extends State<AddWarrantyScreen> {
     if (isEditing) {
       _loadWarrantyData();
     }
+  }
+
+  Future<void> _showAdOnce() async {
+    if (_adShown) return;
+
+    final isPremium = await _authService.isPremiumUser();
+    if (isPremium) return;
+
+    await AdService().showAddWarrantyAd();
+    _adShown = true;
   }
 
   void _loadWarrantyData() {
@@ -677,6 +689,8 @@ class _AddWarrantyScreenState extends State<AddWarrantyScreen> {
     try {
       final userId = await _authService.getCurrentUserId();
       if (userId == null) return;
+
+      await _showAdOnce();
 
       String? productPhotoUrl = _productImageUrl;
       String? invoicePhotoUrl = _invoiceImageUrl;

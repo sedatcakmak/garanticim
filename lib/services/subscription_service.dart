@@ -17,6 +17,10 @@ class SubscriptionService {
   StreamSubscription<List<PurchaseDetails>>? _subscription;
   List<ProductDetails> _products = [];
 
+  /// Bu callback, UI tarafından atanacak.
+  /// Başarılı veya hatalı satın alma durumlarını bildirmek için kullanılır.
+  void Function(bool success, [String? message])? onPurchaseResult;
+
   Future<void> initialize() async {
     final available = await _inAppPurchase.isAvailable();
     if (!available) {
@@ -42,10 +46,7 @@ class SubscriptionService {
   Future<bool> loadProducts() async {
     try {
       final available = await _inAppPurchase.isAvailable();
-      if (!available) {
-        debugPrint('In-app purchase not available');
-        return false;
-      }
+      if (!available) return false;
 
       const Set<String> productIds = {monthlySubscriptionId};
       final ProductDetailsResponse response = await _inAppPurchase
@@ -74,12 +75,14 @@ class SubscriptionService {
     }
   }
 
-  Future<bool> purchaseSubscription() async {
+  /// Satın alma sürecini başlatır ama sonucu burada dönmez.
+  /// Sonuç, [onPurchaseResult] callback'i ile bildirilir.
+  Future<void> purchaseSubscription() async {
     try {
       final product = monthlyProduct;
       if (product == null) {
-        debugPrint('Product not available');
-        return false;
+        onPurchaseResult?.call(false, 'Ürün bulunamadı.');
+        return;
       }
 
       final PurchaseParam purchaseParam = PurchaseParam(
@@ -87,28 +90,30 @@ class SubscriptionService {
       );
 
       await _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
-      return true;
     } catch (e) {
       debugPrint('Error purchasing subscription: $e');
-      return false;
+      onPurchaseResult?.call(false, 'Satın alma hatası: $e');
     }
   }
 
-  Future<bool> restorePurchases() async {
+  Future<void> restorePurchases() async {
     try {
       await _inAppPurchase.restorePurchases();
-      return true;
     } catch (e) {
       debugPrint('Error restoring purchases: $e');
-      return false;
+      onPurchaseResult?.call(false, 'Satın almalar geri yüklenemedi.');
     }
   }
 
   void _onPurchaseUpdate(List<PurchaseDetails> purchaseDetailsList) async {
-    for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
-      if (purchaseDetails.status == PurchaseStatus.purchased ||
-          purchaseDetails.status == PurchaseStatus.restored) {
+    for (final purchaseDetails in purchaseDetailsList) {
+      if (purchaseDetails.status == PurchaseStatus.purchased) {
         await _verifyAndUpdatePremium(purchaseDetails);
+        onPurchaseResult?.call(true);
+        debugPrint("SATIN ALMA TAMAMLANDI!");
+      } else if (purchaseDetails.status == PurchaseStatus.error) {
+        debugPrint("SATIN ALMA HATASI: ${purchaseDetails.error}");
+        onPurchaseResult?.call(false, purchaseDetails.error?.message);
       }
 
       if (purchaseDetails.pendingCompletePurchase) {
@@ -131,6 +136,10 @@ class SubscriptionService {
     }
   }
 
+  void dispose() {
+    _subscription?.cancel();
+  }
+
   Future<void> checkSubscriptionStatus() async {
     try {
       final expiryDate = await _authService.getPremiumExpiryDate();
@@ -142,13 +151,12 @@ class SubscriptionService {
           expiryDate: null,
           subscriptionId: null,
         );
+        debugPrint('Abonelik süresi dolmuş, premium iptal edildi.');
+      } else {
+        debugPrint('Abonelik hala aktif, geçerlilik: $expiryDate');
       }
     } catch (e) {
       debugPrint('Error checking subscription status: $e');
     }
-  }
-
-  void dispose() {
-    _subscription?.cancel();
   }
 }

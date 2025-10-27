@@ -44,10 +44,13 @@ class _SocialFeedScreenState extends State<SocialFeedScreen> {
   }
 
   Future<void> _showAdOnce() async {
-    if (!_adShown) {
-      await AdService().showSocialFeedAd();
-      _adShown = true;
-    }
+    if (_adShown) return;
+
+    final isPremium = await _authService.isPremiumUser();
+    if (isPremium) return;
+
+    await AdService().showSocialFeedAd();
+    _adShown = true;
   }
 
   Future<void> _approvePost(WarrantyItem post) async {

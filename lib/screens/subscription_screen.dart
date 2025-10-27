@@ -23,99 +23,62 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   @override
   void initState() {
     super.initState();
+
+    _subscriptionService.onPurchaseResult = _handlePurchaseResult;
+    _subscriptionService.initialize();
     _loadProducts();
   }
 
+  @override
+  void dispose() {
+    _subscriptionService.dispose();
+    super.dispose();
+  }
+
+  void _handlePurchaseResult(bool success, [String? message]) {
+    if (!mounted) return;
+
+    setState(() => _isLoading = false);
+
+    if (success) {
+      _showSuccessDialog();
+    } else {
+      _showErrorDialog(
+        message ?? 'Satın alma işlemi tamamlanamadı. Lütfen tekrar deneyin.',
+      );
+    }
+  }
+
   Future<void> _loadProducts() async {
-    setState(() {
-      _isLoadingProducts = true;
-    });
+    setState(() => _isLoadingProducts = true);
 
     try {
       final success = await _subscriptionService.loadProducts();
       if (success && mounted) {
         final product = _subscriptionService.monthlyProduct;
         if (product != null) {
-          setState(() {
-            _price = product.price;
-          });
+          setState(() => _price = product.price);
         }
       }
-    } catch (e) {
-      debugPrint('Error loading products: $e');
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoadingProducts = false;
-        });
-      }
+      if (mounted) setState(() => _isLoadingProducts = false);
     }
   }
 
   Future<void> _purchaseSubscription() async {
     if (_isLoading) return;
-
-    setState(() {
-      _isLoading = true;
-    });
-
+    setState(() => _isLoading = true);
     HapticFeedback.mediumImpact();
 
-    try {
-      final success = await _subscriptionService.purchaseSubscription();
-
-      if (mounted) {
-        if (success) {
-          _showSuccessDialog();
-        } else {
-          _showErrorDialog(
-            'Satın alma işlemi başlatılamadı. Lütfen tekrar deneyin.',
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        _showErrorDialog('Bir hata oluştu: ${e.toString()}');
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
+    await _subscriptionService.purchaseSubscription();
   }
 
   Future<void> _restorePurchases() async {
     if (_isLoading) return;
-
-    setState(() {
-      _isLoading = true;
-    });
-
+    setState(() => _isLoading = true);
     HapticFeedback.lightImpact();
 
-    try {
-      final success = await _subscriptionService.restorePurchases();
-
-      if (mounted) {
-        if (success) {
-          _showSuccessDialog();
-        } else {
-          _showErrorDialog('Geri yüklenecek satın alma bulunamadı.');
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        _showErrorDialog('Bir hata oluştu: ${e.toString()}');
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
+    await _subscriptionService.restorePurchases();
   }
 
   void _showSuccessDialog() {

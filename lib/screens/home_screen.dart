@@ -6,7 +6,6 @@ import 'package:garanticim/widgets/responsive_dialog.dart';
 import '../models/warranty_item.dart';
 import '../services/firebase_service.dart';
 import '../services/social_service.dart';
-import '../services/ad_service.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/empty_state_widget.dart';
 import '../widgets/warranty_card.dart';
@@ -503,8 +502,6 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         return;
       }
-
-      await AdService().showAddWarrantyAd();
     }
 
     if (mounted) {
