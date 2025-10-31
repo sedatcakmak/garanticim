@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/ad_config.dart';
 import 'auth_service.dart';
 
@@ -16,12 +17,30 @@ class AdService {
   bool _isSocialFeedAdLoaded = false;
   bool _isAddWarrantyAdLoaded = false;
 
+  static const String _socialFeedVisitCountKey = 'social_feed_visit_count';
+
   static Future<void> initialize() async {
     await MobileAds.instance.initialize();
   }
 
   Future<bool> shouldShowAds() async {
     return !(await _authService.isPremiumUser());
+  }
+
+  Future<bool> shouldShowSocialFeedAd() async {
+    if (await _authService.isPremiumUser()) return false;
+
+    final prefs = await SharedPreferences.getInstance();
+    final visitCount = prefs.getInt(_socialFeedVisitCountKey) ?? 0;
+    final newCount = visitCount + 1;
+
+    if (newCount == 3) {
+      await prefs.setInt(_socialFeedVisitCountKey, 0);
+      return true;
+    }
+
+    await prefs.setInt(_socialFeedVisitCountKey, newCount);
+    return false;
   }
 
   Future<void> loadSocialFeedAd() async {
@@ -74,13 +93,7 @@ class AdService {
 
     bool adWatched = false;
 
-    await _socialFeedRewardedAd!.show(
-      onUserEarnedReward: (ad, reward) {
-        adWatched = true;
-        debugPrint('User earned reward: ${reward.amount} ${reward.type}');
-      },
-    );
-
+    // Set callbacks before showing the ad
     _socialFeedRewardedAd!.fullScreenContentCallback =
         FullScreenContentCallback(
           onAdDismissedFullScreenContent: (ad) {
@@ -97,6 +110,13 @@ class AdService {
           },
         );
 
+    await _socialFeedRewardedAd!.show(
+      onUserEarnedReward: (ad, reward) {
+        adWatched = true;
+        debugPrint('User earned reward: ${reward.amount} ${reward.type}');
+      },
+    );
+
     return adWatched;
   }
 
@@ -108,13 +128,7 @@ class AdService {
 
     bool adWatched = false;
 
-    await _addWarrantyRewardedAd!.show(
-      onUserEarnedReward: (ad, reward) {
-        adWatched = true;
-        debugPrint('User earned reward: ${reward.amount} ${reward.type}');
-      },
-    );
-
+    // Set callbacks before showing the ad
     _addWarrantyRewardedAd!.fullScreenContentCallback =
         FullScreenContentCallback(
           onAdDismissedFullScreenContent: (ad) {
@@ -130,6 +144,13 @@ class AdService {
             debugPrint('Add warranty ad failed to show: $error');
           },
         );
+
+    await _addWarrantyRewardedAd!.show(
+      onUserEarnedReward: (ad, reward) {
+        adWatched = true;
+        debugPrint('User earned reward: ${reward.amount} ${reward.type}');
+      },
+    );
 
     return adWatched;
   }

@@ -42,147 +42,149 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
     return CupertinoPageScaffold(
       backgroundColor: AppColors.background,
       child: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(24.w),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 90.h),
-              Image.asset('assets/logo.png', width: 120.w, height: 120.w),
-              SizedBox(height: 32.h),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(24.w),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/logo.png', width: 120.w, height: 120.w),
+                SizedBox(height: 32.h),
 
-              Text(
-                'Garanticim',
-                style: TextStyle(
-                  fontFamily: AppFonts.family,
-                  fontSize: TextSizes.big.sp,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.text,
-                ),
-              ),
-              SizedBox(height: 16.h),
-
-              Text(
-                'Satın aldığın ürünlerin garanti sürelerini, fatura belgelerini ve tedarikçi bilgilerini tek yerden takip et.',
-                style: TextStyle(
-                  fontFamily: AppFonts.family,
-                  fontSize: TextSizes.body.sp,
-                  color: AppColors.textSecondary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 8.h),
-
-              Text(
-                'Her ürün için fatura fotoğrafını yükle, kalan garanti süresini anında gör.',
-                style: TextStyle(
-                  fontFamily: AppFonts.family,
-                  fontSize: TextSizes.body.sp,
-                  color: AppColors.textSecondary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 48.h),
-
-              SizedBox(
-                width: double.infinity,
-                child: CupertinoButton(
-                  onPressed: _continueAsGuest,
-                  borderRadius: BorderRadius.circular(16.r),
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                  color: AppColors.black,
-                  child: Text(
-                    'Devam Et',
-                    style: TextStyle(
-                      fontFamily: AppFonts.family,
-                      fontSize: TextSizes.box.sp,
-                      color: AppColors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+                Text(
+                  'Garanticim',
+                  style: TextStyle(
+                    fontFamily: AppFonts.family,
+                    fontSize: TextSizes.big.sp,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.text,
                   ),
                 ),
-              ),
+                SizedBox(height: 16.h),
 
-              SizedBox(height: 24.h),
-
-              Text(
-                'Size SMS ile doğrulama kodu göndereceğiz.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: AppFonts.family,
-                  fontSize: TextSizes.small.sp,
-                  color: AppColors.textSecondary,
+                Text(
+                  'Satın aldığın ürünlerin garanti sürelerini, fatura belgelerini ve tedarikçi bilgilerini tek yerden takip et.',
+                  style: TextStyle(
+                    fontFamily: AppFonts.family,
+                    fontSize: TextSizes.body.sp,
+                    color: AppColors.textSecondary,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-              ),
-              SizedBox(height: 16.h),
+                SizedBox(height: 8.h),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        CupertinoPageRoute(
-                          builder: (context) => const PolicyViewerScreen(
-                            title: 'Kullanım Koşulları',
-                            assetPath: 'assets/data/terms_of_service.txt',
-                          ),
-                        ),
-                      );
-                    },
+                Text(
+                  'Her ürün için fatura fotoğrafını yükle, kalan garanti süresini anında gör.',
+                  style: TextStyle(
+                    fontFamily: AppFonts.family,
+                    fontSize: TextSizes.body.sp,
+                    color: AppColors.textSecondary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 48.h),
+
+                SizedBox(
+                  width: double.infinity,
+                  child: CupertinoButton(
+                    onPressed: _continueAsGuest,
+                    borderRadius: BorderRadius.circular(16.r),
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    color: AppColors.black,
                     child: Text(
-                      'Kullanım Koşulları',
+                      'Devam Et',
                       style: TextStyle(
                         fontFamily: AppFonts.family,
-                        fontSize: TextSizes.small.sp,
-                        color: AppColors.primary,
-                        decoration: TextDecoration.underline,
+                        fontSize: TextSizes.box.sp,
+                        color: AppColors.white,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  Text(
-                    ' ve ',
-                    style: TextStyle(
-                      fontFamily: AppFonts.family,
-                      fontSize: TextSizes.small.sp,
-                      color: AppColors.textSecondary,
-                    ),
+                ),
+
+                SizedBox(height: 24.h),
+
+                Text(
+                  'Size SMS ile doğrulama kodu göndereceğiz.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: AppFonts.family,
+                    fontSize: TextSizes.small.sp,
+                    color: AppColors.textSecondary,
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        CupertinoPageRoute(
-                          builder: (context) => const PolicyViewerScreen(
-                            title: 'Gizlilik Politikası',
-                            assetPath: 'assets/data/privacy_policy.txt',
+                ),
+                SizedBox(height: 16.h),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (context) => const PolicyViewerScreen(
+                              title: 'Kullanım Koşulları',
+                              assetPath: 'assets/data/terms_of_service.txt',
+                            ),
                           ),
+                        );
+                      },
+                      child: Text(
+                        'Kullanım Koşulları',
+                        style: TextStyle(
+                          fontFamily: AppFonts.family,
+                          fontSize: TextSizes.small.sp,
+                          color: AppColors.primary,
+                          decoration: TextDecoration.underline,
                         ),
-                      );
-                    },
-                    child: Text(
-                      'Gizlilik Politikası',
+                      ),
+                    ),
+                    Text(
+                      ' ve ',
                       style: TextStyle(
                         fontFamily: AppFonts.family,
                         fontSize: TextSizes.small.sp,
-                        color: AppColors.primary,
-                        decoration: TextDecoration.underline,
+                        color: AppColors.textSecondary,
                       ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                'Devam ederek kabul etmiş olursunuz',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: AppFonts.family,
-                  fontSize: TextSizes.small.sp,
-                  color: AppColors.textSecondary,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (context) => const PolicyViewerScreen(
+                              title: 'Gizlilik Politikası',
+                              assetPath: 'assets/data/privacy_policy.txt',
+                            ),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'Gizlilik Politikası',
+                        style: TextStyle(
+                          fontFamily: AppFonts.family,
+                          fontSize: TextSizes.small.sp,
+                          color: AppColors.primary,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              SizedBox(height: 90.h),
-            ],
+                SizedBox(height: 8.h),
+                Text(
+                  'Devam ederek kabul etmiş olursunuz',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: AppFonts.family,
+                    fontSize: TextSizes.small.sp,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

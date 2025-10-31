@@ -31,7 +31,9 @@ class PolicyViewerScreen extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
-                      child: CupertinoActivityIndicator(color: AppColors.primary),
+                      child: CupertinoActivityIndicator(
+                        color: AppColors.primary,
+                      ),
                     );
                   }
 

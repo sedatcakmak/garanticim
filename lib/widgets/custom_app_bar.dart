@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../utils/app_colors.dart';
@@ -18,43 +17,41 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   @override
-  Size get preferredSize => Size.fromHeight(115.h);
+  Size get preferredSize => Size.fromHeight(110.h);
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.only(
-        bottomLeft: Radius.circular(20.r),
-        bottomRight: Radius.circular(20.r),
+    return Container(
+      height: preferredSize.height,
+      padding: EdgeInsets.only(top: 20.h, left: 16.w, right: 16.w),
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(20.r),
+          bottomRight: Radius.circular(20.r),
+        ),
       ),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          height: preferredSize.height,
-          padding: EdgeInsets.only(top: 20.h, left: 16.w, right: 16.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  if (leading != null) leading!,
-                  if (leading != null) SizedBox(width: 10.w),
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontFamily: AppFonts.family,
-                      fontSize: (TextSizes.title - 4).sp,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.black,
-                      decoration: TextDecoration.none,
-                    ),
-                  ),
-                ],
+              if (leading != null) leading!,
+              if (leading != null) SizedBox(width: 10.w),
+              Text(
+                title,
+                style: TextStyle(
+                  fontFamily: AppFonts.family,
+                  fontSize: (TextSizes.title - 4).sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.black,
+                  decoration: TextDecoration.none,
+                ),
               ),
-              if (actions != null) Row(children: actions!),
             ],
           ),
-        ),
+          if (actions != null) Row(children: actions!),
+        ],
       ),
     );
   }

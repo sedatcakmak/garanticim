@@ -11,6 +11,7 @@ import '../utils/app_fonts.dart';
 import '../utils/text_sizes.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/empty_state_widget.dart';
+import '../widgets/responsive_dialog.dart';
 import 'moderation_screen.dart';
 
 class SocialFeedScreen extends StatefulWidget {
@@ -24,14 +25,30 @@ class _SocialFeedScreenState extends State<SocialFeedScreen> {
   final SocialService _socialService = SocialService();
   final AuthService _authService = AuthService();
   final NotificationService _notificationService = NotificationService();
+  final TextEditingController _searchController = TextEditingController();
+
   bool _isAdmin = false;
-  bool _adShown = false;
+
+  // Search, Sort, Filter states
+  String _searchQuery = '';
+  String _sortBy = 'date_new'; // 'date_new', 'date_old', 'liked', 'disliked'
+  String? _selectedCategory;
+  String? _selectedBrand;
+
+  List<String> _allCategories = [];
+  List<String> _allBrands = [];
 
   @override
   void initState() {
     super.initState();
     _checkAdminStatus();
     _showAdOnce();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _checkAdminStatus() async {
@@ -44,13 +61,12 @@ class _SocialFeedScreenState extends State<SocialFeedScreen> {
   }
 
   Future<void> _showAdOnce() async {
-    if (_adShown) return;
+    final adService = AdService();
+    final shouldShow = await adService.shouldShowSocialFeedAd();
 
-    final isPremium = await _authService.isPremiumUser();
-    if (isPremium) return;
+    if (!shouldShow) return;
 
-    await AdService().showSocialFeedAd();
-    _adShown = true;
+    await adService.showSocialFeedAd();
   }
 
   Future<void> _approvePost(WarrantyItem post) async {
@@ -82,33 +98,219 @@ class _SocialFeedScreenState extends State<SocialFeedScreen> {
   }
 
   void _showSuccessDialog(String message) {
-    showCupertinoDialog(
+    ResponsiveDialog.show(
       context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('Başarılı'),
-        content: Text(message),
-        actions: [
-          CupertinoDialogAction(
-            child: const Text('Tamam'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
+      title: 'Başarılı',
+      description: message,
+      titleColor: AppColors.success,
     );
   }
 
   void _showErrorDialog(String message) {
-    showCupertinoDialog(
+    ResponsiveDialog.show(
       context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('Hata'),
-        content: Text(message),
+      title: 'Hata',
+      description: message,
+      titleColor: AppColors.danger,
+    );
+  }
+
+  // Extract unique categories and brands from posts
+  void _extractCategoriesAndBrands(List<WarrantyItem> posts) {
+    final categories = posts.map((p) => p.categoryName).toSet().toList();
+    final brands = posts.map((p) => p.brandName).toSet().toList();
+
+    categories.sort();
+    brands.sort();
+
+    // Only update if changed to avoid unnecessary rebuilds
+    if (_allCategories.length != categories.length ||
+        _allBrands.length != brands.length) {
+      // Schedule setState for after build is complete
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _allCategories = categories;
+            _allBrands = brands;
+          });
+        }
+      });
+    }
+  }
+
+  // Apply search, filter, and sort to posts
+  List<WarrantyItem> _applyFiltersAndSort(List<WarrantyItem> posts) {
+    var filtered = posts;
+
+    // Apply search
+    if (_searchQuery.isNotEmpty) {
+      final query = _searchQuery.toLowerCase();
+      filtered = filtered.where((post) {
+        return post.productName.toLowerCase().contains(query) ||
+            post.supplier.toLowerCase().contains(query);
+      }).toList();
+    }
+
+    // Apply category filter
+    if (_selectedCategory != null) {
+      filtered = filtered
+          .where((post) => post.categoryName == _selectedCategory)
+          .toList();
+    }
+
+    // Apply brand filter
+    if (_selectedBrand != null) {
+      filtered = filtered
+          .where((post) => post.brandName == _selectedBrand)
+          .toList();
+    }
+
+    // Apply sorting
+    switch (_sortBy) {
+      case 'liked':
+        filtered.sort(
+          (a, b) => (b.isLiked ? 1 : 0).compareTo(a.isLiked ? 1 : 0),
+        );
+        break;
+      case 'disliked':
+        filtered.sort(
+          (a, b) => (a.isLiked ? 1 : 0).compareTo(b.isLiked ? 1 : 0),
+        );
+        break;
+      case 'date_old':
+        filtered.sort((a, b) => a.sharedAt.compareTo(b.sharedAt));
+        break;
+      case 'date_new':
+      default:
+        filtered.sort((a, b) => b.sharedAt.compareTo(a.sharedAt));
+        break;
+    }
+
+    return filtered;
+  }
+
+  void _showSortOptions() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        title: Text('Sırala', style: TextStyle(fontFamily: AppFonts.family)),
         actions: [
-          CupertinoDialogAction(
-            child: const Text('Tamam'),
-            onPressed: () => Navigator.of(context).pop(),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              setState(() => _sortBy = 'date_new');
+              Navigator.pop(context);
+            },
+            child: Text(
+              'Tarihe göre (En Yeni)',
+              style: TextStyle(fontFamily: AppFonts.family),
+            ),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              setState(() => _sortBy = 'date_old');
+              Navigator.pop(context);
+            },
+            child: Text(
+              'Tarihe göre (En Eski)',
+              style: TextStyle(fontFamily: AppFonts.family),
+            ),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              setState(() => _sortBy = 'liked');
+              Navigator.pop(context);
+            },
+            child: Text(
+              'Önce Beğenilenler',
+              style: TextStyle(fontFamily: AppFonts.family),
+            ),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              setState(() => _sortBy = 'disliked');
+              Navigator.pop(context);
+            },
+            child: Text(
+              'Önce Beğenilmeyenler',
+              style: TextStyle(fontFamily: AppFonts.family),
+            ),
           ),
         ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          child: Text('İptal', style: TextStyle(fontFamily: AppFonts.family)),
+        ),
+      ),
+    );
+  }
+
+  void _showCategoryFilter() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        title: Text(
+          'Kategori Filtrele',
+          style: TextStyle(fontFamily: AppFonts.family),
+        ),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              setState(() => _selectedCategory = null);
+              Navigator.pop(context);
+            },
+            child: Text('Tümü', style: TextStyle(fontFamily: AppFonts.family)),
+          ),
+          ..._allCategories.map(
+            (category) => CupertinoActionSheetAction(
+              onPressed: () {
+                setState(() => _selectedCategory = category);
+                Navigator.pop(context);
+              },
+              child: Text(
+                category,
+                style: TextStyle(fontFamily: AppFonts.family),
+              ),
+            ),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          child: Text('İptal', style: TextStyle(fontFamily: AppFonts.family)),
+        ),
+      ),
+    );
+  }
+
+  void _showBrandFilter() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        title: Text(
+          'Marka Filtrele',
+          style: TextStyle(fontFamily: AppFonts.family),
+        ),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              setState(() => _selectedBrand = null);
+              Navigator.pop(context);
+            },
+            child: Text('Tümü', style: TextStyle(fontFamily: AppFonts.family)),
+          ),
+          ..._allBrands.map(
+            (brand) => CupertinoActionSheetAction(
+              onPressed: () {
+                setState(() => _selectedBrand = brand);
+                Navigator.pop(context);
+              },
+              child: Text(brand, style: TextStyle(fontFamily: AppFonts.family)),
+            ),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          child: Text('İptal', style: TextStyle(fontFamily: AppFonts.family)),
+        ),
       ),
     );
   }
@@ -121,57 +323,138 @@ class _SocialFeedScreenState extends State<SocialFeedScreen> {
         children: [
           SafeArea(
             top: false,
-            child: Padding(
-              padding: EdgeInsets.only(top: 100.h, bottom: 100.h),
-              child: StreamBuilder<List<WarrantyItem>>(
-                stream: _socialService.getAllPosts(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                      child: CupertinoActivityIndicator(
-                        color: AppColors.primary,
+            child: Column(
+              children: [
+                SizedBox(height: 100.h),
+                _buildSearchBar(),
+
+                // Filter and sort buttons
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: CupertinoButton(
+                          padding: EdgeInsets.symmetric(vertical: 8.h),
+                          onPressed: _showSortOptions,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(CupertinoIcons.sort_down, size: 18.sp),
+                              SizedBox(width: 4.w),
+                              Text('Sırala', style: TextStyle(fontSize: 14.sp)),
+                            ],
+                          ),
+                        ),
                       ),
-                    );
-                  }
+                      Expanded(
+                        child: CupertinoButton(
+                          padding: EdgeInsets.symmetric(vertical: 8.h),
+                          onPressed: _showCategoryFilter,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(CupertinoIcons.square_grid_2x2, size: 18.sp),
+                              SizedBox(width: 4.w),
+                              Flexible(
+                                child: Text(
+                                  _selectedCategory ?? 'Kategori',
+                                  style: TextStyle(fontSize: 14.sp),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: CupertinoButton(
+                          padding: EdgeInsets.symmetric(vertical: 8.h),
+                          onPressed: _showBrandFilter,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(CupertinoIcons.tag, size: 18.sp),
+                              SizedBox(width: 4.w),
+                              Text(
+                                _selectedBrand ?? 'Marka',
+                                style: TextStyle(fontSize: 14.sp),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
-                  if (snapshot.hasError) {
-                    return EmptyStateWidget(
-                      icon: CupertinoIcons.exclamationmark_triangle,
-                      title: 'Bir Hata Oluştu',
-                      description:
-                          'Sosyal akış yüklenemedi. Lütfen daha sonra tekrar deneyin.',
-                    );
-                  }
+                Expanded(
+                  child: StreamBuilder<List<WarrantyItem>>(
+                    stream: _socialService.getAllPosts(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CupertinoActivityIndicator(
+                            color: AppColors.primary,
+                          ),
+                        );
+                      }
 
-                  final posts = snapshot.data ?? [];
+                      if (snapshot.hasError) {
+                        return EmptyStateWidget(
+                          icon: CupertinoIcons.exclamationmark_triangle,
+                          title: 'Bir Hata Oluştu',
+                          description:
+                              'Sosyal akış yüklenemedi. Lütfen daha sonra tekrar deneyin.',
+                        );
+                      }
 
-                  if (posts.isEmpty) {
-                    return EmptyStateWidget(
-                      icon: CupertinoIcons.person_2_square_stack,
-                      title: 'Henüz Paylaşım Yok',
-                      description:
-                          'Topluluk henüz herhangi bir ürün paylaşmamış. İlk paylaşımı sen yap!',
-                    );
-                  }
+                      final posts = snapshot.data ?? [];
 
-                  return ListView.builder(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 8.h,
-                    ),
-                    itemCount: posts.length,
-                    itemBuilder: (context, index) {
-                      final post = posts[index];
-                      return _SocialPostCard(
-                        post: post,
-                        isAdmin: false,
-                        onApprove: () => _approvePost(post),
-                        onReject: () => _rejectPost(post),
+                      if (posts.isEmpty) {
+                        return EmptyStateWidget(
+                          icon: CupertinoIcons.person_2_square_stack,
+                          title: 'Henüz Paylaşım Yok',
+                          description:
+                              'Topluluk henüz herhangi bir ürün paylaşmamış. İlk paylaşımı sen yap!',
+                        );
+                      }
+
+                      // Extract categories and brands when data arrives
+                      _extractCategoriesAndBrands(posts);
+
+                      // Apply filters and sorting
+                      final filteredPosts = _applyFiltersAndSort(posts);
+
+                      if (filteredPosts.isEmpty) {
+                        return EmptyStateWidget(
+                          icon: CupertinoIcons.search,
+                          title: 'Sonuç Bulunamadı',
+                          description:
+                              'Arama ve filtrelerinizle eşleşen paylaşım bulunamadı.',
+                        );
+                      }
+
+                      return ListView.builder(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 8.h,
+                        ),
+                        itemCount: filteredPosts.length,
+                        itemBuilder: (context, index) {
+                          final post = filteredPosts[index];
+                          return _SocialPostCard(
+                            post: post,
+                            isAdmin: false,
+                            onApprove: () => _approvePost(post),
+                            onReject: () => _rejectPost(post),
+                          );
+                        },
                       );
                     },
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             ),
           ),
           Align(
@@ -195,6 +478,43 @@ class _SocialFeedScreenState extends State<SocialFeedScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      child: CupertinoSearchTextField(
+        controller: _searchController,
+        placeholder: 'Ürün veya tedarikçi ismi ara...',
+        itemSize: 24.w,
+        padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 8.w),
+        style: TextStyle(
+          fontFamily: AppFonts.family,
+          fontSize: TextSizes.normal.sp,
+          color: AppColors.black,
+        ),
+        placeholderStyle: TextStyle(
+          fontFamily: AppFonts.family,
+          fontSize: TextSizes.normal.sp,
+          color: AppColors.gray,
+        ),
+        prefixIcon: Icon(
+          CupertinoIcons.search,
+          size: 22.w,
+          color: AppColors.gray,
+        ),
+        suffixIcon: Icon(
+          CupertinoIcons.clear_circled_solid,
+          size: 22.w,
+          color: AppColors.gray,
+        ),
+        onChanged: (value) {
+          setState(() {
+            _searchQuery = value.toLowerCase();
+          });
+        },
       ),
     );
   }

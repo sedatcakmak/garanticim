@@ -11,7 +11,7 @@ class AdConfig {
   static const String iosAddWarrantyAdUnitId =
       'ca-app-pub-9756854719794108/9791321615';
 
-  static const int adShowFrequency = 1;
+  static int adShowFrequency = 1;
 
   static String get socialFeedAdUnitId {
     if (Platform.isAndroid) {

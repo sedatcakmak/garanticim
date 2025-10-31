@@ -430,7 +430,7 @@ class _AddWarrantyScreenState extends State<AddWarrantyScreen> {
                     padding: EdgeInsets.all(16.w),
                     children: [
                       _buildForm(),
-                      SizedBox(height: 80.h),
+                      SizedBox(height: 75.h),
                     ],
                   ),
                   if (_isLoading)

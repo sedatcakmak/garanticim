@@ -20,6 +20,7 @@ import 'package:intl/date_symbol_data_local.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('tr_TR', null);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
 
   try {
     await Firebase.initializeApp(
@@ -51,7 +52,9 @@ class GaranticimApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(411.42857142857144, 914.2857142857143),
+      designSize: MediaQuery.of(context).size.width > 600
+          ? const Size(822.857142857, 1828.57142857)
+          : const Size(411.42857142857144, 914.2857142857143),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
