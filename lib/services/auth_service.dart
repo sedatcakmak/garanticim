@@ -114,6 +114,32 @@ class AuthService {
     }
   }
 
+  Future<bool> isRegistered() async {
+    try {
+      final user = await getCurrentUser();
+      return user?.isRegistered ?? false;
+    } catch (e) {
+      debugPrint('Error checking registration: $e');
+      return false;
+    }
+  }
+
+  Future<void> completeRegistration({
+    required String phoneNumber,
+    required String name,
+    required String city,
+  }) async {
+    final userId = await getCurrentUserId();
+    if (userId == null) throw Exception('User not logged in');
+
+    await _firestore.collection(_collectionName).doc(userId).update({
+      'phoneNumber': phoneNumber,
+      'name': name,
+      'city': city,
+      'isRegistered': true,
+    });
+  }
+
   Future<DateTime?> getPremiumExpiryDate() async {
     try {
       final user = await getCurrentUser();

@@ -8,14 +8,14 @@ import '../utils/app_colors.dart';
 import '../utils/app_fonts.dart';
 import '../utils/text_sizes.dart';
 
-class PhoneLoginScreen extends StatefulWidget {
-  const PhoneLoginScreen({super.key});
+class WelcomeScreen extends StatefulWidget {
+  const WelcomeScreen({super.key});
 
   @override
-  State<PhoneLoginScreen> createState() => _PhoneLoginScreenState();
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
-class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
+class _WelcomeScreenState extends State<WelcomeScreen> {
   final AuthService _authService = AuthService();
   final TextEditingController _phoneController = TextEditingController();
 

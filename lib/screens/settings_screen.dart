@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:garanticim/screens/phone_login_screen.dart';
+import 'package:garanticim/screens/welcome_screen.dart';
 import 'package:garanticim/widgets/responsive_dialog.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../services/notification_service.dart';
@@ -134,7 +134,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _logout() {
     Navigator.of(context).pushAndRemoveUntil(
-      CupertinoPageRoute(builder: (context) => const PhoneLoginScreen()),
+      CupertinoPageRoute(builder: (context) => const WelcomeScreen()),
       (route) => false,
     );
   }

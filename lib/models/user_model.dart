@@ -8,6 +8,10 @@ class UserModel {
   final bool isPremium;
   final DateTime? premiumExpiryDate;
   final String? subscriptionId;
+  final bool isRegistered;
+  final String? phoneNumber;
+  final String? name;
+  final String? city;
 
   UserModel({
     required this.userId,
@@ -17,6 +21,10 @@ class UserModel {
     this.isPremium = false,
     this.premiumExpiryDate,
     this.subscriptionId,
+    this.isRegistered = false,
+    this.phoneNumber,
+    this.name,
+    this.city,
   });
 
   Map<String, dynamic> toMap() {
@@ -30,6 +38,10 @@ class UserModel {
           ? Timestamp.fromDate(premiumExpiryDate!)
           : null,
       'subscriptionId': subscriptionId,
+      'isRegistered': isRegistered,
+      'phoneNumber': phoneNumber,
+      'name': name,
+      'city': city,
     };
   }
 
@@ -44,6 +56,10 @@ class UserModel {
           ? (map['premiumExpiryDate'] as Timestamp).toDate()
           : null,
       subscriptionId: map['subscriptionId'],
+      isRegistered: map['isRegistered'] ?? false,
+      phoneNumber: map['phoneNumber'],
+      name: map['name'],
+      city: map['city'],
     );
   }
 
@@ -63,6 +79,10 @@ class UserModel {
     bool? isPremium,
     DateTime? premiumExpiryDate,
     String? subscriptionId,
+    bool? isRegistered,
+    String? phoneNumber,
+    String? name,
+    String? city,
   }) {
     return UserModel(
       userId: userId ?? this.userId,
@@ -72,6 +92,10 @@ class UserModel {
       isPremium: isPremium ?? this.isPremium,
       premiumExpiryDate: premiumExpiryDate ?? this.premiumExpiryDate,
       subscriptionId: subscriptionId ?? this.subscriptionId,
+      isRegistered: isRegistered ?? this.isRegistered,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      name: name ?? this.name,
+      city: city ?? this.city,
     );
   }
 }

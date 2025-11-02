@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:garanticim/screens/welcome_screen.dart';
 import 'firebase_options.dart';
 import 'services/auth_service.dart';
 import 'services/firebase_service.dart';
 import 'services/notification_service.dart';
-import 'screens/phone_login_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/social_feed_screen.dart';
@@ -20,7 +20,6 @@ import 'package:intl/date_symbol_data_local.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('tr_TR', null);
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
 
   try {
     await Firebase.initializeApp(
@@ -106,7 +105,7 @@ class AuthWrapper extends StatelessWidget {
         if (isLoggedIn) {
           return const MainScreen();
         } else {
-          return const PhoneLoginScreen();
+          return const WelcomeScreen();
         }
       },
     );

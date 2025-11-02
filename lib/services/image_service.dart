@@ -28,6 +28,31 @@ class ImageService {
     }
   }
 
+  Future<File?> pickImageFromCamera() async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 1920,
+        maxHeight: 1920,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        return File(image.path);
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Show action sheet to choose between camera and gallery
+  Future<File?> pickImage() async {
+    // This method will be called from UI with context to show action sheet
+    // For now, just return gallery as default
+    return await pickImageFromGallery();
+  }
+
   Future<String?> uploadImage(
     File image,
     String userId,

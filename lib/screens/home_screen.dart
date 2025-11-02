@@ -15,6 +15,7 @@ import '../utils/text_sizes.dart';
 import 'add_warranty_screen.dart';
 import 'warranty_detail_screen.dart';
 import 'subscription_screen.dart';
+import 'phone_registration_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String _filterType = 'all';
   bool _isProcessingShare = false;
   String? _sharingWarrantyId;
+  bool _isRegistered = false;
 
   @override
   void initState() {
@@ -43,15 +45,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _initializeUser() async {
     final userId = await _authService.getCurrentUserId();
-    setState(() {
-      _userId = userId;
-    });
+    final isRegistered = await _authService.isRegistered();
+    if (mounted) {
+      setState(() {
+        _userId = userId;
+        _isRegistered = isRegistered;
+      });
+    }
   }
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _navigateToRegistration() {
+    Navigator.push(
+      context,
+      CupertinoPageRoute(builder: (context) => const PhoneRegistrationScreen()),
+    ).then((_) {
+      // Refresh registration status after returning
+      _initializeUser();
+    });
   }
 
   @override
@@ -66,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 SizedBox(height: 100.h),
                 _buildSearchBar(),
+                if (!_isRegistered) _buildRegistrationBanner(),
                 _buildFilterButtons(),
                 Expanded(child: _buildWarrantiesList()),
               ],
@@ -121,6 +138,86 @@ class _HomeScreenState extends State<HomeScreen> {
             _searchQuery = value.toLowerCase();
           });
         },
+      ),
+    );
+  }
+
+  Widget _buildRegistrationBanner() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.primary.withValues(alpha: 0.1),
+            AppColors.success.withValues(alpha: 0.1),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: AppColors.primary.withValues(alpha: 0.3),
+          width: 1.5,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(12.w),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              CupertinoIcons.lock_shield_fill,
+              color: AppColors.primary,
+              size: 24.sp,
+            ),
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Faturalarını Kaybet!',
+                  style: TextStyle(
+                    fontFamily: AppFonts.family,
+                    fontSize: TextSizes.normal.sp,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.text,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  'Kayıt ol, sosyal paylaşım yap ve faturalarını güvende tut',
+                  style: TextStyle(
+                    fontFamily: AppFonts.family,
+                    fontSize: TextSizes.small.sp,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 8.w),
+          CupertinoButton(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(12.r),
+            onPressed: _navigateToRegistration,
+            child: Text(
+              'Kayıt Ol',
+              style: TextStyle(
+                fontFamily: AppFonts.family,
+                fontSize: TextSizes.small.sp,
+                fontWeight: FontWeight.bold,
+                color: AppColors.white,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -255,8 +352,25 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _showShareOptions(WarrantyItem warranty) {
+  Future<void> _showShareOptions(WarrantyItem warranty) async {
     if (_isProcessingShare) return;
+
+    // Check if user is registered
+    final isRegistered = await _authService.isRegistered();
+    if (!isRegistered) {
+      if (mounted) {
+        ResponsiveDialog.show(
+          context: context,
+          title: 'Kayıt Gerekli',
+          description:
+              'Sosyal paylaşım yapabilmek için kayıt olmanız gerekiyor. Kayıt olmak için ana sayfadaki "Kayıt Ol" butonuna tıklayın.',
+          titleColor: AppColors.warning,
+        );
+      }
+      return;
+    }
+
+    if (!mounted) return;
 
     showCupertinoModalPopup(
       context: context,

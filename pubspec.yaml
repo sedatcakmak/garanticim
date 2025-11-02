@@ -1,7 +1,7 @@
 name: garanticim
 description: "Test uygulaması."
 publish_to: 'none'
-version: 1.0.6+5
+version: 1.0.7+6
 
 environment:
   sdk: ^3.9.0

@@ -12,6 +12,7 @@ import '../services/notification_service.dart';
 import '../services/categories_brands_loader.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/image_picker_widget.dart';
+import '../widgets/image_source_picker.dart';
 import '../widgets/custom_app_bar.dart';
 import '../utils/app_colors.dart';
 import '../utils/app_fonts.dart';
@@ -662,7 +663,7 @@ class _AddWarrantyScreenState extends State<AddWarrantyScreen> {
   }
 
   Future<void> _pickProductImage() async {
-    final image = await _imageService.pickImageFromGallery();
+    final image = await ImageSourcePicker.pickImage(context);
     if (image != null) {
       setState(() {
         _productImage = image;
@@ -671,7 +672,7 @@ class _AddWarrantyScreenState extends State<AddWarrantyScreen> {
   }
 
   Future<void> _pickInvoiceImage() async {
-    final image = await _imageService.pickImageFromGallery();
+    final image = await ImageSourcePicker.pickImage(context);
     if (image != null) {
       setState(() {
         _invoiceImage = image;
