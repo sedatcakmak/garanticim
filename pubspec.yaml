@@ -1,7 +1,7 @@
 name: garanticim
-description: "Test uygulaması."
+description: "Garanticim ile tüm ürünlerinin garanti sürelerini kolayca takip et. Hatırlatmalar, bildirimler ve düzenli kayıtlarla hiçbir garanti süresi kaçmaz!"
 publish_to: 'none'
-version: 1.0.7+6
+version: 1.0.8+9
 
 environment:
   sdk: ^3.9.0
